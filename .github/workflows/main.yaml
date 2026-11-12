@@ -1,0 +1,41 @@
+name: Build and Push to GHCR
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Generate short commit SHA tag and save to GITHUB_ENV
+      - name: Set image tag
+        run: echo "TAG=sha-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      # 3. Login to GitHub Container Registry (GHCR)
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+        # 4. Build API image with APP_VERSION build-arg
+      - name: Build API image
+        run: docker build --build-arg APP_VERSION=$TAG -t ghcr.io/abhishek-patwa-devops/api:$TAG ./api
+
+      # 5. Build Migrations image
+      - name: Build Migrations image
+        run: docker build -t ghcr.io/abhishek-patwa-devops/migrate:$TAG ./migrations
+
+      # 6. Push both images to GHCR
+      - name: Push images to GHCR
+        run: |
+          docker push ghcr.io/abhishek-patwa-devops/api:$TAG
+          docker push ghcr.io/abhishek-patwa-devops/migrate:$TAG
+
