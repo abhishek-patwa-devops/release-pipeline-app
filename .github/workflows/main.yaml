@@ -39,3 +39,26 @@ jobs:
           docker push ghcr.io/abhishek-patwa-devops/api:$TAG
           docker push ghcr.io/abhishek-patwa-devops/migrate:$TAG
 
+
+  bump-dev-tag:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout the gitops repo
+        uses: actions/checkout@v4
+        with:
+          repository: abhishek-patwa-devops/release-pipeline-gitops
+          ssh-key: ${{ secrets.GITOPS_DEPLOY_KEY }}
+
+      - name: Updating the latest commit SHA into values file
+        run: TAG="sha-${GITHUB_SHA::7}" yq -i '.image.tag = strenv(TAG)' envs/dev/values.yaml
+
+      - name: Commit and push to Gitops repo
+        run: |
+          git config user.name "release-pipeline-bot"
+          git config user.email "release-pipeline-bot@users.noreply.github.com"
+          git commit -am "dev: deploy sha-${GITHUB_SHA::7}"
+          git push
+
