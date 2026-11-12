@@ -1,0 +1,42 @@
+name: PR Validation Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the pull request's code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up the runtime environment (python example)
+      - name: Setup python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      # 3. Install project dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      # 4. Run code linter
+      - name: Run linter
+        run: |
+          pip install ruff
+          ruff check . 
+
+
+      # 5. Run automated tests
+      - name: Run tests
+        run: |
+          pip install pytest
+          pytest
+
