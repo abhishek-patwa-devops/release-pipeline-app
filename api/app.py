@@ -24,7 +24,7 @@ def readyz():
         with get_conn() as conn:
             conn.execute("SELECT 1")
         return jsonify(status="ready")
-    except Exception as exc:
+    except psycopg.Error  as exc:
         return jsonify(status="not ready", error=str(exc)), 503
 
 

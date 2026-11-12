@@ -34,7 +34,6 @@ jobs:
       # 4. Run code linter
       - name: Run linter
         run: |
-          pip install ruff
           ruff check . 
 
 
