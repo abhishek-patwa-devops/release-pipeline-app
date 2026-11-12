@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
 
     steps:
       # 1. Check out the pull request's code
@@ -20,6 +23,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+          cache-dependency-path: api/requirements-dev.txt
 
       # 3. Install project dependencies
       - name: Install dependencies
