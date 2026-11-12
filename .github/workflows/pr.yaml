@@ -39,7 +39,5 @@ jobs:
 
       # 5. Run automated tests
       - name: Run tests
-        run: |
-          pip install pytest
-          pytest
+        run: python -m pytest -v
 
