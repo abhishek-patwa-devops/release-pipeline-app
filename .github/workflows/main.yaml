@@ -59,6 +59,10 @@ jobs:
         run: |
           git config user.name "release-pipeline-bot"
           git config user.email "release-pipeline-bot@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "Dev Already at SHA, Nothing to commit"
+          else
           git commit -am "dev: deploy sha-${GITHUB_SHA::7}"
           git push
+          fi
 
