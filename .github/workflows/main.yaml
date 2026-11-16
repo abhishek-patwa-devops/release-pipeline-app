@@ -33,7 +33,28 @@ jobs:
       - name: Build Migrations image
         run: docker build -t ghcr.io/abhishek-patwa-devops/migrate:$TAG ./migrations
 
-      # 6. Push both images to GHCR
+      # 6. Scan both images before anything is pushed
+      - name: Scan API image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/abhishek-patwa-devops/api:${{ env.TAG }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Scan Migrations image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/abhishek-patwa-devops/migrate:${{ env.TAG }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      # 7. Push both images to GHCR (only reached if both scans passed)
       - name: Push images to GHCR
         run: |
           docker push ghcr.io/abhishek-patwa-devops/api:$TAG
