@@ -1,2 +1,2 @@
-FROM flyway/flyway:10.17.0
+FROM flyway/flyway:13.12.2
 COPY *.sql /flyway/sql/
