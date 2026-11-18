@@ -8,6 +8,8 @@ Deployment config lives in the companion repo
 
 ## The flow
 
+![Pipeline diagram: pull request to production](docs/pipeline-diagram.svg)
+
 ```
 PR ──► pr.yaml (lint, tests, build + Trivy scan)  ──► review + required checks ──► merge to main
                                                                                        │
@@ -47,6 +49,15 @@ Staging and prod reuse that exact tag. Nothing is rebuilt during promotion.
    (write access to that one repo only), sets `envs/dev/values.yaml` → `image.tag` with `yq`,
    and pushes as `release-pipeline-bot`. It skips the commit if dev already has that tag,
    so re-running the workflow is safe.
+
+## Prerequisites
+
+- Docker, to build and run the images locally.
+- Python 3.12, to run the tests.
+- To deploy: a Kubernetes cluster (I used kind), kubectl and Argo CD, set up as described in the
+  [gitops repo](https://github.com/abhishek-patwa-devops/release-pipeline-gitops#prerequisites).
+- For `main.yaml`: a deploy key with write access on the gitops repo, stored here as the
+  `GITOPS_DEPLOY_KEY` secret. Images go to GHCR with the workflow's own `GITHUB_TOKEN`.
 
 ## Run locally
 
