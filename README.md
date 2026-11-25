@@ -100,3 +100,5 @@ I used an AI assistant (Claude) during this project, as the brief allows. I used
 concepts (mainly Argo CD), review my YAML, help debug CI failures, and draft parts of the work:
 the sample Flask app and its tests, the Postgres manifest, parts of the workflows and these
 READMEs. I ran and tested everything myself and can walk through every file.
+
+demo for the review on 25 Nov.
